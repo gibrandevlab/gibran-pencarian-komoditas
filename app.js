@@ -140,9 +140,11 @@ function initKualitas() {
   let rows = [], dispose = () => {}, loading = null;
   const read = bindSearch(panel, render);
 
+  // Judul grup = nama komoditas; klik judul menyalin kode komoditas
+  const head = (r, t) => `<li class="grp"><button data-copy="${r.km}" data-label="Kode komoditas" title="Ketuk untuk menyalin kode komoditas">
+    <strong>${hl(r.nk, t)}</strong><small>Kel ${r.kel} · Sub ${r.sub} · Kelas ${r.kls} · Kom ${r.kom}</small></button></li>`;
   const item = (r, t) => `<li><button class="row b" data-copy="${r.kode}" data-label="Kode" title="Ketuk untuk menyalin kode lengkap">
-    <span class="nq">${hl(r.nq, t)}</span><span class="nk">${hl(r.nk, t)}</span><span class="lv">${esc(r.lv)}</span>
-    <span class="codes"><span class="kel" data-l="Kel">${r.kel}</span><span class="sub" data-l="Sub">${r.sub}</span><span class="kls" data-l="Kelas">${r.kls}</span><span class="kom" data-l="Kom">${r.kom}</span><span class="kq" data-l="Kual">${r.kq}</span></span></button></li>`;
+    <span class="kq">${r.kq}</span><span class="nq">${hl(r.nq, t)}</span><span class="kd">${r.kode}</span></button></li>`;
 
   function render() {
     const t = read(), q = $('input', panel).value.trim();
@@ -150,7 +152,13 @@ function initKualitas() {
     dispose();
     st.textContent = `${fmt(out.length)} kualitas`;
     showEmpty(panel, out.length > 0, q);
-    if (out.length) dispose = mount(list, out, r => item(r, t));
+    if (!out.length) return;
+    let last = null; // judul muncul setiap kali komoditasnya berganti
+    dispose = mount(list, out, r => {
+      const h = r.g !== last ? head(r, t) : '';
+      last = r.g;
+      return h + item(r, t);
+    });
   }
 
   list.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); b && copy(b.dataset.copy, b.dataset.label); });
@@ -162,8 +170,8 @@ function initKualitas() {
       const km = x.Kode_Kelompok + x.Kode_Subkelompok + x.Kode_Kelas + x.Kode_Komoditas;
       return {
         kel: x.Kode_Kelompok, sub: x.Kode_Subkelompok, kls: x.Kode_Kelas, kom: x.Kode_Komoditas,
-        nk: x.Nama_Komoditas, kq: x.Kode_Kualitas, nq: x.Nama_Kualitas, lv: x.Level,
-        kode: km + x.Kode_Kualitas,
+        nk: x.Nama_Komoditas, kq: x.Kode_Kualitas, nq: x.Nama_Kualitas,
+        km, kode: km + x.Kode_Kualitas, g: km + x.Nama_Komoditas,
         n: (x.Nama_Komoditas + ' ' + x.Nama_Kualitas).toLowerCase(),
         // kode lengkap, kode komoditas, dan kode komoditas gaya komoditas.json (tanpa nol di depan)
         c: [km + x.Kode_Kualitas, km, +x.Kode_Kelompok + km.slice(2)].map(String)

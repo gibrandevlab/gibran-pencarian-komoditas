@@ -80,20 +80,25 @@ mark{background:rgba(255,204,0,.4);color:inherit;border-radius:3px;padding:0 1px
 @media (prefers-reduced-motion:reduce){.thumb,.toast,.row,.seg button,.chips button{transition:none!important}}
 @media (prefers-reduced-transparency:reduce){.bar,.dock{background:var(--canvas);backdrop-filter:none;-webkit-backdrop-filter:none}}
 
-/* Tab Kualitas: 8 kolom */
-.row.b{grid-template-columns:1fr auto;grid-template-areas:"q l" "k k" "c c";align-items:start}
-.row.b .nq{grid-area:q;font-weight:600;font-size:.95rem;line-height:1.35;overflow-wrap:anywhere}
-.row.b .nk{grid-area:k;font-size:.85rem;color:var(--muted);overflow-wrap:anywhere}
-.row.b .lv{grid-area:l;justify-self:end;padding:3px 9px;border-radius:999px;background:var(--field);color:var(--muted);font-size:.7rem;font-weight:600}
-.row.b .codes{grid-area:c;display:flex;flex-wrap:wrap;gap:2px 12px;font:.78rem ui-monospace,"SF Mono",Menlo,monospace;color:var(--accent);font-variant-numeric:tabular-nums}
-.row.b .codes span::before{content:attr(data-l) " ";color:var(--muted);font-family:-apple-system,system-ui,sans-serif}
+/* Tab Kualitas: dikelompokkan per nama komoditas */
+.card{overflow:clip}
+.grp{position:sticky;top:calc(63px + env(safe-area-inset-top));z-index:5}
+.grp button{display:block;width:100%;text-align:left;padding:10px 16px 8px;background:color-mix(in srgb,var(--text) 8%,var(--canvas));border-bottom:1px solid var(--line)}
+.grp strong{display:block;font-size:.9rem;line-height:1.3;overflow-wrap:anywhere}
+.grp small{font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.row.b{grid-template-columns:1fr auto;grid-template-areas:"q q" "k d";gap:3px 12px;padding:11px 16px 11px 28px;align-items:baseline}
+.row.b .nq{grid-area:q;font-weight:500;font-size:.95rem;line-height:1.35;overflow-wrap:anywhere}
+.row.b .kq,.row.b .kd{font:.78rem ui-monospace,"SF Mono",Menlo,monospace;color:var(--muted);font-variant-numeric:tabular-nums}
+.row.b .kq{grid-area:k;color:var(--accent);font-weight:600}
+.row.b .kq::before{content:"Kode ";font-family:-apple-system,system-ui,sans-serif;font-weight:400;color:var(--muted)}
+.row.b .kd{grid-area:d}
 @media (min-width:680px){
-  .thead.b,.row.b{grid-template-columns:48px 52px 56px 72px minmax(0,1fr) 72px minmax(0,1.2fr) 100px;gap:12px}
-  .row.b{grid-template-areas:none;align-items:baseline;padding:11px 18px}
-  .row.b .codes{display:contents}
-  .row.b .codes span{font:.84rem ui-monospace,"SF Mono",Menlo,monospace;color:var(--accent);font-weight:600}
-  .row.b .codes span::before{content:none}
-  .row.b>*,.row.b .codes>*{grid-area:auto;justify-self:start}
-  .row.b .kel{grid-column:1}.row.b .sub{grid-column:2}.row.b .kls{grid-column:3}.row.b .kom{grid-column:4}
-  .row.b .nk{grid-column:5;font-size:.9rem;color:var(--text)}.row.b .kq{grid-column:6}.row.b .nq{grid-column:7;font-size:.9rem}.row.b .lv{grid-column:8}
+  .thead.b,.row.b{grid-template-columns:96px minmax(0,1fr) 120px;gap:12px}
+  .thead.b span:last-child{text-align:right}
+  .row.b{grid-template-areas:none;padding:11px 18px}
+  .row.b>*{grid-area:auto;grid-row:1}
+  .row.b .kq{grid-column:1;font-size:.86rem}.row.b .kq::before{content:none}
+  .row.b .nq{grid-column:2}
+  .row.b .kd{grid-column:3;text-align:right;font-size:.82rem}
+  .grp button{padding:10px 18px 8px}
 }
