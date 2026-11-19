@@ -206,3 +206,23 @@ addEventListener('keydown', e => {
   }
 });
 go(location.hash.slice(1));
+
+/* ===== Tema terang / gelap (mengikuti sistem sampai dipilih manual) ===== */
+const root = document.documentElement, themeBtn = $('#themeBtn'), tcMeta = $('meta[name=theme-color]');
+function applyTheme(t, animate) {
+  if (animate) { root.classList.add('tt'); setTimeout(() => root.classList.remove('tt'), 450); }
+  root.dataset.theme = t;
+  tcMeta.content = t === 'dark' ? '#000000' : '#f5f5f7';
+  themeBtn.setAttribute('aria-label', t === 'dark' ? 'Ganti ke mode terang' : 'Ganti ke mode gelap');
+}
+applyTheme(root.dataset.theme || 'light');
+themeBtn.addEventListener('click', () => {
+  const t = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  applyTheme(t, true);
+  try { localStorage.setItem('theme', t); } catch {}
+});
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change', e => {
+  let saved = null;
+  try { saved = localStorage.getItem('theme'); } catch {}
+  if (!saved) applyTheme(e.matches ? 'dark' : 'light', true);
+});
