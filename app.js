@@ -136,40 +136,21 @@ function initKomoditas() {
 
 /* ===== Fungsi 2: Kualitas per komoditas (Master_Komoditas_SPKRT_2027.json) ===== */
 function initKualitas() {
-  const panel = $('#p-kualitas'), list = $('.list', panel), st = $('.status', panel), chips = $('.chips', panel);
-  let rows = [], kel = '', dispose = () => {}, loading = null;
+  const panel = $('#p-kualitas'), list = $('.list', panel), st = $('.status', panel);
+  let rows = [], dispose = () => {}, loading = null;
   const read = bindSearch(panel, render);
 
-  const head = (r, t) => `<li class="grp"><button data-copy="${r.km}" data-label="Kode komoditas">
-    <strong>${hl(r.kom, t)}</strong><small>Kode komoditas ${r.km} · Kelompok ${r.kel}</small></button></li>`;
   const item = (r, t) => `<li><button class="row b" data-copy="${r.kode}" data-label="Kode" title="Ketuk untuk menyalin kode lengkap">
-    <span class="code">${r.kode.slice(0, 7)}<b>${r.kode.slice(7)}</b></span><span class="name">${hl(r.kual, t)}</span></button></li>`;
+    <span class="nq">${hl(r.nq, t)}</span><span class="nk">${hl(r.nk, t)}</span><span class="lv">${esc(r.lv)}</span>
+    <span class="codes"><span class="kel" data-l="Kel">${r.kel}</span><span class="sub" data-l="Sub">${r.sub}</span><span class="kls" data-l="Kelas">${r.kls}</span><span class="kom" data-l="Kom">${r.kom}</span><span class="kq" data-l="Kual">${r.kq}</span></span></button></li>`;
 
   function render() {
     const t = read(), q = $('input', panel).value.trim();
-    const out = rows.filter(r => (!kel || r.kel === kel) && hit(r, t));
+    const out = rows.filter(r => hit(r, t));
     dispose();
-    st.textContent = `${fmt(out.length)} kualitas${kel ? ' · Kelompok ' + kel : ''}`;
+    st.textContent = `${fmt(out.length)} kualitas`;
     showEmpty(panel, out.length > 0, q);
-    if (!out.length) return;
-    let last = null; // judul komoditas muncul setiap kali komoditasnya berganti
-    dispose = mount(list, out, r => {
-      const h = r.g !== last ? head(r, t) : '';
-      last = r.g;
-      return h + item(r, t);
-    });
-  }
-
-  function buildChips() {
-    const ks = [...new Set(rows.map(r => r.kel))].sort();
-    chips.innerHTML = ['', ...ks].map(k => `<button type="button" data-k="${k}" aria-pressed="${k === ''}" title="${k ? 'Kelompok ' + k : 'Semua kelompok'}">${k || 'Semua'}</button>`).join('');
-    chips.addEventListener('click', e => {
-      const b = e.target.closest('[data-k]');
-      if (!b) return;
-      kel = b.dataset.k;
-      chips.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
-      render();
-    });
+    if (out.length) dispose = mount(list, out, r => item(r, t));
   }
 
   list.addEventListener('click', e => { const b = e.target.closest('[data-copy]'); b && copy(b.dataset.copy, b.dataset.label); });
@@ -180,14 +161,14 @@ function initKualitas() {
     rows = d.map(x => {
       const km = x.Kode_Kelompok + x.Kode_Subkelompok + x.Kode_Kelas + x.Kode_Komoditas;
       return {
-        kel: x.Kode_Kelompok, kom: x.Nama_Komoditas, kual: x.Nama_Kualitas,
-        km, kode: km + x.Kode_Kualitas, g: km + x.Nama_Komoditas,
+        kel: x.Kode_Kelompok, sub: x.Kode_Subkelompok, kls: x.Kode_Kelas, kom: x.Kode_Komoditas,
+        nk: x.Nama_Komoditas, kq: x.Kode_Kualitas, nq: x.Nama_Kualitas, lv: x.Level,
+        kode: km + x.Kode_Kualitas,
         n: (x.Nama_Komoditas + ' ' + x.Nama_Kualitas).toLowerCase(),
         // kode lengkap, kode komoditas, dan kode komoditas gaya komoditas.json (tanpa nol di depan)
         c: [km + x.Kode_Kualitas, km, +x.Kode_Kelompok + km.slice(2)].map(String)
       };
     });
-    buildChips();
     render();
   });
 
