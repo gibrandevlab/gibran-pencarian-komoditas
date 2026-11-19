@@ -7,66 +7,60 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="floating-header">
-    <div class="header-inner">
-      <div class="title-row">
-        <div>
-          <h1 class="display-title">Master Komoditas</h1>
-          <p class="subtitle" id="statusText">Memuat basis data…</p>
-        </div>
-      </div>
+  <h1 class="title">Master Komoditas</h1>
 
-      <div class="controls-bar">
-        <div class="search-field" id="searchWrapper">
-          <svg class="search-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M8.5 3a5.5 5.5 0 1 0 3.473 9.766l3.63 3.63a.75.75 0 1 0 1.06-1.06l-3.63-3.63A5.5 5.5 0 0 0 8.5 3ZM4.5 8.5a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" fill="currentColor"/>
-          </svg>
-          <input
-            type="search"
-            id="searchInput"
-            placeholder="Cari nama atau kode komoditas…"
-            autocomplete="off"
-            spellcheck="false"
-            aria-label="Cari nama atau kode komoditas"
-          />
-          <button type="button" class="clear-btn" id="clearBtn" aria-label="Hapus pencarian" hidden>
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <circle cx="8" cy="8" r="7" fill="currentColor" fill-opacity="0.22"/>
-              <path d="M5.5 5.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </button>
+  <!-- Tampilan 1: daftar komoditas (komoditas.json) -->
+  <section class="panel" id="p-komoditas" aria-label="Daftar komoditas">
+    <div class="bar">
+      <div class="inner">
+        <div class="search">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.5 3a5.5 5.5 0 1 0 3.47 9.77l3.63 3.63a.75.75 0 1 0 1.06-1.06l-3.63-3.63A5.5 5.5 0 0 0 8.5 3ZM4.5 8.5a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" fill="currentColor"/></svg>
+          <input type="search" placeholder="Cari nama atau kode komoditas…" aria-label="Cari nama atau kode komoditas" autocomplete="off" spellcheck="false" />
+          <button type="button" class="clear" aria-label="Hapus pencarian" hidden>&times;</button>
         </div>
-
-        <div class="segmented-control" role="tablist" aria-label="Filter kategori">
-          <div class="segment-thumb" id="segmentThumb" aria-hidden="true"></div>
-          <button type="button" class="segment-btn is-active" role="tab" aria-selected="true" data-filter="Semua">Semua</button>
-          <button type="button" class="segment-btn" role="tab" aria-selected="false" data-filter="Makanan">Makanan</button>
-          <button type="button" class="segment-btn" role="tab" aria-selected="false" data-filter="Non Makanan">Non Makanan</button>
+        <div class="seg" style="--n:3;--i:0" role="group" aria-label="Filter kategori">
+          <i class="thumb"></i>
+          <button type="button" aria-pressed="true" data-v="Semua">Semua</button>
+          <button type="button" aria-pressed="false" data-v="Makanan">Makanan</button>
+          <button type="button" aria-pressed="false" data-v="Non Makanan">Non Makanan</button>
         </div>
       </div>
     </div>
-    <div class="scroll-edge-mask" aria-hidden="true"></div>
-  </header>
+    <p class="status" role="status">Memuat komoditas…</p>
+    <div class="card">
+      <div class="thead a"><span>No</span><span>Kode</span><span>Nama komoditas</span><span>Kategori</span></div>
+      <ul class="list"></ul>
+      <div class="empty" hidden><b></b><p>Coba kata kunci atau kode lain.</p></div>
+    </div>
+  </section>
 
-  <main class="content-area">
-    <div class="surface-card">
-      <div class="table-header-row" aria-hidden="true">
-        <span>No</span>
-        <span>Kode</span>
-        <span>Nama Komoditas</span>
-        <span>Kategori</span>
-      </div>
-      <ul class="commodity-list" id="resultList" role="list"></ul>
-
-      <div class="empty-state" id="emptyState" hidden>
-        <p class="empty-title" id="emptyTitle">Tidak ada hasil</p>
-        <p class="empty-desc" id="emptyDesc">Coba kata kunci atau kode komoditas lain.</p>
+  <!-- Tampilan 2: kualitas per komoditas (Master_Komoditas_SPKRT_2027.json) -->
+  <section class="panel" id="p-kualitas" aria-label="Kualitas komoditas" hidden>
+    <div class="bar">
+      <div class="inner">
+        <div class="search">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.5 3a5.5 5.5 0 1 0 3.47 9.77l3.63 3.63a.75.75 0 1 0 1.06-1.06l-3.63-3.63A5.5 5.5 0 0 0 8.5 3ZM4.5 8.5a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" fill="currentColor"/></svg>
+          <input type="search" placeholder="Cari komoditas, kualitas, atau kode…" aria-label="Cari komoditas, kualitas, atau kode" autocomplete="off" spellcheck="false" />
+          <button type="button" class="clear" aria-label="Hapus pencarian" hidden>&times;</button>
+        </div>
+        <div class="chips" role="group" aria-label="Filter kelompok"></div>
       </div>
     </div>
-  </main>
+    <p class="status" role="status">Memuat kualitas…</p>
+    <div class="card">
+      <div class="thead b"><span>Kode lengkap</span><span>Nama kualitas</span></div>
+      <ul class="list"></ul>
+      <div class="empty" hidden><b></b><p>Coba kata kunci atau kode lain.</p></div>
+    </div>
+  </section>
 
-  <div class="toast-pill" id="toastPill" role="status" aria-live="polite">Kode disalin</div>
+  <nav class="dock seg" id="dock" style="--n:2;--i:0" aria-label="Pilih tampilan">
+    <i class="thumb"></i>
+    <button type="button" aria-pressed="true" data-v="komoditas">Komoditas</button>
+    <button type="button" aria-pressed="false" data-v="kualitas">Kualitas</button>
+  </nav>
 
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>
 </html>
