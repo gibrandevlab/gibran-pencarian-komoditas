@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Master Komoditas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="floating-header">
+    <div class="header-inner">
+      <div class="title-row">
+        <div>
+          <h1 class="display-title">Master Komoditas</h1>
+          <p class="subtitle" id="statusText">Memuat basis data…</p>
+        </div>
+      </div>
+
+      <div class="controls-bar">
+        <div class="search-field" id="searchWrapper">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M8.5 3a5.5 5.5 0 1 0 3.473 9.766l3.63 3.63a.75.75 0 1 0 1.06-1.06l-3.63-3.63A5.5 5.5 0 0 0 8.5 3ZM4.5 8.5a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" fill="currentColor"/>
+          </svg>
+          <input
+            type="search"
+            id="searchInput"
+            placeholder="Cari nama atau kode komoditas…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Cari nama atau kode komoditas"
+          />
+          <button type="button" class="clear-btn" id="clearBtn" aria-label="Hapus pencarian" hidden>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="7" fill="currentColor" fill-opacity="0.22"/>
+              <path d="M5.5 5.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="segmented-control" role="tablist" aria-label="Filter kategori">
+          <div class="segment-thumb" id="segmentThumb" aria-hidden="true"></div>
+          <button type="button" class="segment-btn is-active" role="tab" aria-selected="true" data-filter="Semua">Semua</button>
+          <button type="button" class="segment-btn" role="tab" aria-selected="false" data-filter="Makanan">Makanan</button>
+          <button type="button" class="segment-btn" role="tab" aria-selected="false" data-filter="Non Makanan">Non Makanan</button>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-edge-mask" aria-hidden="true"></div>
+  </header>
+
+  <main class="content-area">
+    <div class="surface-card">
+      <div class="table-header-row" aria-hidden="true">
+        <span>No</span>
+        <span>Kode</span>
+        <span>Nama Komoditas</span>
+        <span>Kategori</span>
+      </div>
+      <ul class="commodity-list" id="resultList" role="list"></ul>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <p class="empty-title" id="emptyTitle">Tidak ada hasil</p>
+        <p class="empty-desc" id="emptyDesc">Coba kata kunci atau kode komoditas lain.</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-pill" id="toastPill" role="status" aria-live="polite">Kode disalin</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
