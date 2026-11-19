@@ -33,14 +33,17 @@ function hl(text, toks) {
    Parse JSON ±10 MB dan pencarian berjalan di worker, jadi layar tidak macet di HP lama.
    Kalau Worker gagal dibuat/dijalankan, worker.js dimuat sebagai skrip biasa dan dipakai langsung. */
 const Engine = (() => {
-  let worker = null, local = null, localReady = null, seq = 0;
+  let worker = null, local = null, localReady = null, seq = 0, workerReady = false, broken = false;
   const pending = new Map();   // id -> { msg, resolve }
   const loads = new Map();     // name -> pesan load yang sudah berhasil (untuk dipulihkan saat pindah ke cadangan)
 
   function startWorker() {
     try {
       worker = new Worker('worker.js');
+      // Worker yang sehat langsung mengirim {ready:true}. Kalau diam (file kosong/rusak), pindah ke cadangan.
+      const guard = setTimeout(() => { if (!workerReady) useLocal(); }, 6000);
       worker.onmessage = e => {
+        if (e.data && e.data.ready) { workerReady = true; clearTimeout(guard); return; }
         const p = pending.get(e.data.id);
         if (p) { pending.delete(e.data.id); p.resolve(e.data); }
       };
@@ -66,6 +69,7 @@ const Engine = (() => {
       }
       local = eng;
     }).catch(() => {
+      broken = true;   // worker.js tidak bisa dipakai sama sekali (kosong / tidak terunggah)
       for (const [id, p] of pending) { pending.delete(id); p.resolve({ id, ok: false, error: 'engine' }); }
     });
     return localReady;
@@ -73,6 +77,7 @@ const Engine = (() => {
 
   function call(msg) {
     msg.id = ++seq;
+    if (broken) return Promise.resolve({ id: msg.id, ok: false, error: 'engine' });
     return new Promise(resolve => {
       const done = r => { if (msg.type === 'load' && r.ok) loads.set(msg.name, msg); resolve(r); };
       pending.set(msg.id, { msg, resolve: done });
@@ -226,7 +231,9 @@ async function ensureLoaded(name, url, kind, panel, loadingText, onRetry) {
   st.textContent = loadingText;
   const r = await Engine.load(name, url, kind);
   if (r.ok) return true;
-  st.textContent = navigator.onLine
+  st.textContent = r.error === 'engine'
+    ? 'Berkas aplikasi tidak lengkap (worker.js kosong atau belum terunggah). Unggah ulang semua file, lalu muat ulang halaman. '
+    : navigator.onLine
     ? 'Data gagal dimuat. Periksa sinyal, lalu coba lagi. '
     : 'Tidak ada sinyal dan data belum tersimpan di HP. Buka aplikasi sekali saat ada sinyal. ';
   const btn = document.createElement('button');
